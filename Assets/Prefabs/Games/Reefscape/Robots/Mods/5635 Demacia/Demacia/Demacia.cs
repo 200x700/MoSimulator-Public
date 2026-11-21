@@ -15,6 +15,9 @@ public class Demacia : ReefscapeCommandRobotBase
     // serialize correctly through the mod build pipeline.
     [SerializeField] private GenericAnimationJoint clickerLeft, clickerRight;
     [SerializeField] private float clickerSpeed = 180f;
+    [Tooltip("How far a clicker may swing open, in degrees")]
+    [SerializeField] private float clickerMaxOpen = 70f;
+    private readonly Collider[] _clickerHits = new Collider[16];
     [Header("Coral Setpoints")]
     [SerializeField] private DemaciaSetpoint stow;
     [SerializeField] private DemaciaSetpoint intake;
@@ -74,7 +77,39 @@ public class Demacia : ReefscapeCommandRobotBase
 
     private void UpdateJoints()
     {
+        UpdateClicker(clickerLeft, 1);
+        UpdateClicker(clickerRight, -1);
         // TODO: Apply this robot's mechanism targets to the joints.
+    }
+
+    private void UpdateClicker(GenericAnimationJoint clicker, float direction)
+    {
+        var moveAway = clicker.transform.Find("MoveAway").GetComponent<BoxCollider>();
+        if (!OnlyTriggersInside(clicker.transform, moveAway))
+            clicker.SpringLoaded().AllowedDirection(direction).RotationSpeed(clickerSpeed);
+
+        var t = clicker.transform;
+        float open = Mathf.DeltaAngle(0, t.localEulerAngles.y) * direction;
+        float limited = Mathf.Clamp(open, 0, clickerMaxOpen);
+        if (!Mathf.Approximately(open, limited))
+            t.localRotation = Quaternion.Euler(0, limited * direction, 0);
+    }
+
+    private bool OnlyTriggersInside(Transform clicker, BoxCollider moveAway)
+    {
+        var box = moveAway.transform;
+        int count = Physics.OverlapBoxNonAlloc(box.position, Vector3.Scale(moveAway.size, box.lossyScale) / 2,
+            _clickerHits, box.rotation, ~0, QueryTriggerInteraction.Collide);
+        int scoring = LayerMask.NameToLayer("Scoring");
+        bool anyTrigger = false;
+        for (int i = 0; i < count; i++)
+        {
+            var hit = _clickerHits[i];
+            if (hit == moveAway || hit.gameObject.layer == clicker.gameObject.layer || hit.gameObject.layer == scoring) continue;
+            if (!hit.isTrigger) return false;
+            anyTrigger = true;
+        }
+        return anyTrigger;
     }
 
     private void UpdateAudio()
@@ -90,11 +125,6 @@ public class Demacia : ReefscapeCommandRobotBase
     private void PlacePiece()
     {
         // TODO: Request coral outtake or algae outtake / barge shooting.
-    }
-    private void FixedUpdate()
-    {
-        clickerLeft.SpringLoaded().AllowedDirection(1).RotationSpeed(clickerSpeed);
-        clickerRight.SpringLoaded().AllowedDirection(-1).RotationSpeed(clickerSpeed);
     }
     private void SetupStates()
     {
