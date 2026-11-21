@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aff2b59de2c4a0c96d6b848990b46af, type: 3}
+  m_Name: Demacia
+  m_EditorClassIdentifier: 
+  teamNumber: 5635
+  teamName: Demacia
+  robotImage: {fileID: 0}
+  mainRobot:
+    displayName: Demacia
+    robotPrefab: {fileID: 7326743791007769793, guid: 581f16a932f56794299373708a60b8d2,
+      type: 3}
+    mainMenuPrefab: {fileID: 3795217575199835772, guid: a912f291664280e4791b006d41d5ca2a,
+      type: 3}
+    spawnSelectionPrefab: {fileID: 3274058827691587387, guid: b9ded395efc67eb42be0067ab711a5c6,
+      type: 3}
+    preloadGamePiece: {fileID: 0}
+    tutorialCards:
+    - {fileID: 651700870813775578, guid: c171a376a0b086b4e8464ea7c9a29c23, type: 3}
+    - {fileID: 7195827275402028307, guid: fa9fa6a7be71bb44889f495bfc6f016b, type: 3}
+    - {fileID: 2979553621332786077, guid: fa8211564a9269d48913f059565ea22e, type: 3}
+  alternateRobots: []
+  autoClimbs: 0
